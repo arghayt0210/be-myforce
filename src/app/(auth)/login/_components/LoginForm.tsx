@@ -9,6 +9,10 @@ export default function LoginForm() {
 
     const handleGoogleSuccess = async (credentialResponse: any) => {
         try {
+            if (!credentialResponse.credential) {
+                console.error('No credential received');
+                return;
+            }
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/google`, {
                 method: 'POST',
                 headers: {
@@ -39,14 +43,18 @@ export default function LoginForm() {
             <GoogleLogin
                 onSuccess={handleGoogleSuccess}
                 onError={() => {
-                    console.log('Login Failed');
+                    console.error('Login Failed');
                 }}
-                useOneTap
+                useOneTap={false}
                 theme="filled_blue"
                 size="large"
                 width="100%"
                 text="continue_with"
                 shape="rectangular"
+                context="signin"
+                // Add these props to help with popup issues
+                type="standard"
+                ux_mode="popup"
             />
         </div>
     )

@@ -15,7 +15,9 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}>
+    <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}
+      onScriptLoadError={() => console.error('Google Script Load Error:')}
+    >
       {children}
       <CookieConsent />
       <Analytics />
