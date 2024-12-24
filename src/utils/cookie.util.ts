@@ -6,7 +6,7 @@ export const CookieUtil = {
     Cookies.set(name, value, {
       ...options,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'Lax',
+      sameSite: 'lax',
     });
   },
 
@@ -30,7 +30,7 @@ export const CookieUtil = {
     Cookies.set('cookie-consent', value.toString(), { 
       expires: 365,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'Lax',
+      sameSite: 'lax',
     });
   },
 };
