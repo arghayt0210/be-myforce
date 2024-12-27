@@ -19,18 +19,8 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            # Debug: Print current location and create directory if needed
-            echo "Current directory: $(pwd)"
-            # Clone repository if it doesn't exist
-            if [ ! -d "/home/${{ secrets.VPS_USER }}/be-myforce" ]; then
-              cd /home/${{ secrets.VPS_USER }}
-              git clone https://github.com/arghayt0210/be-myforce.git
-            fi
-            
-            cd /home/${{ secrets.VPS_USER }}/be-myforce
-            
-            # Create env files if they don't exist
-            touch backend/.env frontend/.env.local
+            # Navigate to existing project directory
+            cd be-myforce || exit 1
             
             # Pull latest changes
             git fetch --all
