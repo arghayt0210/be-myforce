@@ -21,12 +21,12 @@ interface IUser extends Document {
   profile_image_asset?: mongoose.Types.ObjectId;
   bio?: string;
   location: {
-    type: { type: string },
-    coordinates: [number, number], // [longitude, latitude]
-    address: string,
-    city: string,
-    state: string,
-    country: string,
+    type: { type: string };
+    coordinates: [number, number]; // [longitude, latitude]
+    address: string;
+    city: string;
+    state: string;
+    country: string;
   };
   is_onboarded: boolean;
   user_type: 'user' | 'admin';
@@ -89,11 +89,11 @@ const userSchema = new mongoose.Schema<IUser, IUserModel, IUserMethods>(
         type: String,
         enum: ['Point'],
         default: 'Point',
-        required: true
+        required: true,
       },
       coordinates: {
         type: [Number],
-        required: true
+        required: true,
       },
       address: String,
       city: String,

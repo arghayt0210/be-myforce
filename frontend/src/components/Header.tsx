@@ -6,29 +6,28 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import Logo from './Logo';
 import Container from './Container';
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuList, NavigationMenuTrigger } from './ui/navigation-menu';
+import { useAuthStore } from '@/hooks/store/auth.store';
+import UserMenu from './UserMenu';
 
 const Header = () => {
+    const { isAuthenticated } = useAuthStore()
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const navigationLinks = {
         discover: {
             name: 'Discover',
             links: [
-                // { name: 'Browse Communities', href: '/communities' },
-                // { name: 'Popular Groups', href: '/groups' },
-                // { name: 'Events Near You', href: '/events' },
                 { name: 'Activity Feed', href: '/feed' },
             ],
         },
-        connect: {
-            name: 'Connect',
-            links: [
-                { name: 'My Buddy', href: '/my-buddy' },
-                // { name: 'Team Matching', href: '/team-matching' },
-                // { name: 'Mentorship', href: '/mentorship' },
-                // { name: 'Network', href: '/network' },
-            ],
-        },
+        ...(isAuthenticated && {
+            connect: {
+                name: 'Connect',
+                links: [
+                    { name: 'My Buddy', href: '/my-buddy' },
+                ],
+            },
+        })
     };
 
     return (
@@ -68,12 +67,16 @@ const Header = () => {
                     <div className="flex flex-1 items-center justify-end space-x-4">
                         <nav className="flex items-center space-x-2">
                             <ThemeToggle />
-                            <Link
-                                href="/sign-up"
-                                className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium transition-colors bg-primary text-primary-foreground hover:bg-primary/90"
-                            >
-                                Sign Up
-                            </Link>
+                            {isAuthenticated ? (
+                                <UserMenu />
+                            ) : (
+                                <Link
+                                    href="/login"
+                                    className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium transition-colors bg-primary text-primary-foreground hover:bg-primary/90"
+                                >
+                                    Login
+                                </Link>
+                            )}
                         </nav>
 
                         {/* Mobile Menu Button */}
@@ -119,12 +122,14 @@ const Header = () => {
                                 </div>
                             ))}
                             <div className="pt-4 space-y-2">
-                                <Link
-                                    href="/sign-up"
-                                    className="block w-full px-3 py-2 text-sm font-medium text-center bg-primary text-primary-foreground hover:bg-primary/90 rounded-md"
-                                >
-                                    Sign Up
-                                </Link>
+                                {!isAuthenticated && (
+                                    <Link
+                                        href="/login"
+                                        className="block w-full px-3 py-2 text-sm font-medium text-center bg-primary text-primary-foreground hover:bg-primary/90 rounded-md"
+                                    >
+                                        Login
+                                    </Link>
+                                )}
                             </div>
                         </div>
                     </Container>

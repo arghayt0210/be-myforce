@@ -34,3 +34,9 @@ export const CookieUtil = {
     });
   },
 };
+
+
+export const clearAuthCookie = () => {
+  // Set cookie expiration to past date to remove it
+  document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+};
