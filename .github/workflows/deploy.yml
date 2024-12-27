@@ -2,26 +2,13 @@ name: Deploy to VPS
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      
-      - name: Install SSH Key
-        uses: shimataro/ssh-key-action@v2
-        with:
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          known_hosts: unnecessary
-          if_key_exists: replace
-          
-      - name: Adding Known Hosts
-        run: |
-          mkdir -p ~/.ssh
-          ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
-
       - name: Deploy with SSH
         uses: appleboy/ssh-action@v1.0.0
         with:
@@ -29,8 +16,21 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd ~/be-myforce
-            git pull
+            # Ensure we're in the correct directory
+            cd /home/${{ secrets.VPS_USER }}/be-myforce
+            
+            # Backup env files
+            cp backend/.env backend/.env.temp
+            cp frontend/.env.local frontend/.env.local.temp
+            
+            # Force pull latest changes
+            git fetch --all
+            git reset --hard origin/main
+            
+            # Restore env files
+            cp backend/.env.temp backend/.env
+            cp frontend/.env.local frontend/.env.local
+            rm backend/.env.temp frontend/.env.local.temp
             
             # Backend deployment
             cd backend
@@ -42,8 +42,12 @@ jobs:
             npm install --legacy-peer-deps
             npm run build
             
-            # Restart services
-            pm2 restart all
+            # Restart PM2 processes individually
+            pm2 restart backend
+            pm2 restart frontend
             
             # Reload Nginx
             sudo systemctl reload nginx
+            
+            # Log deployment
+            echo "Deployment completed at $(date)" >> /var/log/deployments.log

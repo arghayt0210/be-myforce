@@ -6,9 +6,11 @@ module.exports = {
       script: 'npm',
       args: 'start',
       env: {
-        NODE_ENV: 'production',
+        NODE_ENV: 'prod',
         PORT: 8000
       },
+      watch: false, // Disable watch to prevent auto-restart
+      max_memory_restart: '300M'
     },
     {
       name: 'frontend',
@@ -16,9 +18,11 @@ module.exports = {
       script: 'npm',
       args: 'start',
       env: {
-        NODE_ENV: 'production',
+        NODE_ENV: 'prod',
         PORT: 3000
       },
+      watch: false, // Disable watch to prevent auto-restart
+      max_memory_restart: '300M'
     },
   ],
 };
