@@ -2,35 +2,33 @@ name: Deploy to VPS
 
 on:
   push:
-    branches: [ main ]  # or your default branch
+    branches: [ main ]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '20'
-
+      - uses: actions/checkout@v3
+      
       - name: Install SSH Key
         uses: shimataro/ssh-key-action@v2
         with:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           known_hosts: unnecessary
           if_key_exists: replace
-
+          
       - name: Adding Known Hosts
-        run: ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
-
-      - name: Deploy to VPS
-        env:
-          VPS_HOST: ${{ secrets.VPS_HOST }}
-          VPS_USER: ${{ secrets.VPS_USER }}
         run: |
-          ssh $VPS_USER@$VPS_HOST << 'EOF'
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy with SSH
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
             cd ~/be-myforce
             git pull
             
@@ -47,6 +45,5 @@ jobs:
             # Restart services
             pm2 restart all
             
-            # Reload Nginx (if needed)
+            # Reload Nginx
             sudo systemctl reload nginx
-          EOF
