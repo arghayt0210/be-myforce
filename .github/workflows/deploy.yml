@@ -19,6 +19,8 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            # Debug: Print current location and create directory if needed
+            echo "Current directory: $(pwd)"
             # Clone repository if it doesn't exist
             if [ ! -d "/home/${{ secrets.VPS_USER }}/be-myforce" ]; then
               cd /home/${{ secrets.VPS_USER }}
