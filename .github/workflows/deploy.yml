@@ -9,6 +9,9 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Deploy with SSH
         uses: appleboy/ssh-action@v1.0.0
         with:
@@ -16,38 +19,35 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            # Ensure we're in the correct directory
+            # Clone repository if it doesn't exist
+            if [ ! -d "/home/${{ secrets.VPS_USER }}/be-myforce" ]; then
+              cd /home/${{ secrets.VPS_USER }}
+              git clone https://github.com/arghayt0210/be-myforce.git
+            fi
+            
             cd /home/${{ secrets.VPS_USER }}/be-myforce
             
-            # Backup env files
-            cp backend/.env backend/.env.temp
-            cp frontend/.env.local frontend/.env.local.temp
+            # Create env files if they don't exist
+            touch backend/.env frontend/.env.local
             
-            # Force pull latest changes
+            # Pull latest changes
             git fetch --all
             git reset --hard origin/main
-            
-            # Restore env files
-            cp backend/.env.temp backend/.env
-            cp frontend/.env.local frontend/.env.local
-            rm backend/.env.temp frontend/.env.local.temp
             
             # Backend deployment
             cd backend
             npm install --legacy-peer-deps
             npm run build
+            NODE_ENV=prod npm run start
             
             # Frontend deployment
             cd ../frontend
             npm install --legacy-peer-deps
             npm run build
+            NODE_ENV=prod npm run start
             
-            # Restart PM2 processes individually
-            pm2 restart backend
-            pm2 restart frontend
+            # Restart PM2 processes
+            pm2 restart backend frontend --update-env
             
             # Reload Nginx
             sudo systemctl reload nginx
-            
-            # Log deployment
-            echo "Deployment completed at $(date)" >> /var/log/deployments.log
