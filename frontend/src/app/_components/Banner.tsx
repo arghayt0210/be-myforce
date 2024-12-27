@@ -14,7 +14,7 @@ const Banner = () => {
                     </p>
                     <div className="space-x-4">
                         <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90">
-                            Get Started.
+                            Get Started
                         </Button>
                         <Button size="lg" variant="outline">
                             Learn More
