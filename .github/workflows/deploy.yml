@@ -26,12 +26,20 @@ jobs:
             git fetch --all
             git reset --hard origin/main
             
-            # Kill specific processes by PID
-            sudo kill -9 42481 7494 || true
+            # Find and kill processes on ports 8000 and 3000
+            PORT_8000_PID=$(lsof -t -i:8000)
+            if [ ! -z "$PORT_8000_PID" ]; then
+              echo "Killing process on port 8000: $PORT_8000_PID"
+              sudo kill -9 $PORT_8000_PID
+            fi
             
-            # Double-check and force kill any remaining processes on these ports
-            sudo fuser -k 8000/tcp || true
-            sudo fuser -k 3000/tcp || true
+            PORT_3000_PID=$(lsof -t -i:3000)
+            if [ ! -z "$PORT_3000_PID" ]; then
+              echo "Killing process on port 3000: $PORT_3000_PID"
+              sudo kill -9 $PORT_3000_PID
+            fi
+            
+            # Clean up PM2 processes
             pm2 delete all || true
             
             # Backend deployment
