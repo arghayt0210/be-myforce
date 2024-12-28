@@ -30,13 +30,13 @@ jobs:
             cd backend
             npm install --legacy-peer-deps
             npm run build
-            NODE_ENV=prod npm run start
+            NODE_ENV=production npm run start
             
             # Frontend deployment
             cd ../frontend
             npm install --legacy-peer-deps
             npm run build
-            NODE_ENV=prod npm run start
+            NODE_ENV=production npm run start
             
             # Restart PM2 processes
             pm2 restart backend frontend --update-env

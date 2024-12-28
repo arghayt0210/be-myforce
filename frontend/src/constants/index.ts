@@ -9,7 +9,7 @@ export interface CookieOptions {
 
 export const COOKIE_OPTIONS: CookieOptions = {
   expires: 365,
-  secure: process.env.NEXT_PUBLIC_NODE_ENV === 'prod',
+  secure: process.env.NEXT_PUBLIC_NODE_ENV === 'production',
   sameSite: 'strict', // Keep it strict
   path: '/',
 };

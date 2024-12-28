@@ -144,7 +144,7 @@ export const logout = async (_req: Request, res: Response, next: NextFunction): 
     res.cookie('token', '', {
       httpOnly: true,
       expires: new Date(0), // Expire immediately
-      secure: process.env.NODE_ENV === 'prod',
+      secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
     });
 

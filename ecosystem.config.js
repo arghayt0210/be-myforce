@@ -6,7 +6,7 @@ module.exports = {
       script: 'npm',
       args: 'start',
       env: {
-        NODE_ENV: 'prod',
+        NODE_ENV: 'production',
         PORT: 8000
       },
       watch: false, // Disable watch to prevent auto-restart
@@ -18,7 +18,7 @@ module.exports = {
       script: 'npm',
       args: 'start',
       env: {
-        NODE_ENV: 'prod',
+        NODE_ENV: 'production',
         PORT: 3000
       },
       watch: false, // Disable watch to prevent auto-restart

@@ -55,7 +55,7 @@ export const useCookieConsent = () => {
     
     Cookies.set('cookie-settings', JSON.stringify(allSettings), { 
       expires: 365,
-      secure: process.env.NEXT_PUBLIC_NODE_ENV === 'prod',
+      secure: process.env.NEXT_PUBLIC_NODE_ENV === 'production',
       sameSite: 'strict'
     });
     
@@ -71,7 +71,7 @@ export const useCookieConsent = () => {
     
     Cookies.set('cookie-settings', JSON.stringify(minimalSettings), { 
       expires: 365,
-      secure: process.env.NEXT_PUBLIC_NODE_ENV === 'prod',
+      secure: process.env.NEXT_PUBLIC_NODE_ENV === 'production',
       sameSite: 'strict'
     });
     

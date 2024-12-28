@@ -5,7 +5,7 @@ export const CookieUtil = {
   set: (name: string, value: string, options = {}) => {
     Cookies.set(name, value, {
       ...options,
-      secure: process.env.NEXT_PUBLIC_NODE_ENV === 'prod',
+      secure: process.env.NEXT_PUBLIC_NODE_ENV === 'production',
       sameSite: 'strict',
     });
   },
@@ -29,7 +29,7 @@ export const CookieUtil = {
   setConsent: (value: boolean) => {
     Cookies.set('cookie-consent', value.toString(), { 
       expires: 365,
-      secure: process.env.NEXT_PUBLIC_NODE_ENV === 'prod',
+      secure: process.env.NEXT_PUBLIC_NODE_ENV === 'production',
       sameSite: 'strict',
     });
   },
