@@ -4,42 +4,40 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   output: 'standalone',
     
-    // Configure headers for all static files
-    async headers() {
-        return [
-            {
-                // Handle all files in chunks directory (both JS and CSS)
-                source: '/_next/static/chunks/:path*',
-                headers: [
-                    {
-                        key: 'Cache-Control',
-                        value: 'public, max-age=31536000, immutable'
-                    }
-                ]
-            },
-            {
-                // Handle font files
-                source: '/_next/static/media/:path*',
-                headers: [
-                    {
-                        key: 'Cache-Control',
-                        value: 'public, max-age=31536000, immutable'
-                    }
-                ]
-            }
+  // Rest of your existing configuration
+  async headers() {
+    return [
+      {
+        source: '/_next/static/chunks/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable'
+          }
         ]
-    },
+      },
+      {
+        source: '/_next/static/media/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable'
+          }
+        ]
+      }
+    ]
+  },
   images: {
     remotePatterns: [
-        {
-            protocol: 'https',
-            hostname: 'res.cloudinary.com',
-            pathname: '/dmwi2ywkd/**',
-        },
-        {
-          protocol: 'https',
-          hostname: 'lh3.googleusercontent.com',
-          pathname: '/a/**',
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+        pathname: '/dmwi2ywkd/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+        pathname: '/a/**',
       },
     ],
   },
