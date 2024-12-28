@@ -9,7 +9,11 @@ interface LogoProps {
 
 const Logo = ({ className = '', showText = true }: LogoProps) => {
     return (
-        <Link href="/" className={`flex items-center ${className}`} title='Be MyForce'>
+        <Link
+            href="/"
+            className={`flex items-center hover:cursor-pointer ${className}`}
+            title="Be MyForce"
+        >
             <Image
                 src={logo}
                 alt="Be MyForce Logo"
