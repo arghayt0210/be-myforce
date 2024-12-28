@@ -1,5 +1,5 @@
 import api from "@/lib/api";
-import { LoginFormValues } from "@/schemas/auth.schema";
+import { ForgotPasswordValues, LoginFormValues } from "@/schemas/auth.schema";
 import { SignUpPayload } from "@/types/auth";
 
 export const signUp = async (data: SignUpPayload) => {
@@ -23,5 +23,10 @@ export const loginWithGoogle = async (data: any) => {
 
 export const logout = async () => {
     const response = await api.get('/auth/logout')
+    return response.data
+}
+
+export const forgotPassword = async (data: ForgotPasswordValues) => {
+    const response = await api.post('/auth/forgot-password', data)
     return response.data
 }

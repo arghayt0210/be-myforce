@@ -258,6 +258,16 @@ export const forgotPassword = async (
       return next(new ErrorHandler(404, 'User not found with this email'));
     }
 
+    // Add check for Google user
+    if (user.google_id) {
+      return next(
+        new ErrorHandler(
+          400,
+          'This account uses Google authentication. Please use Google login to access your account.',
+        ),
+      );
+    }
+
     // Generate reset token
     const resetToken = crypto.randomBytes(32).toString('hex');
     user.reset_password_token = crypto.createHash('sha256').update(resetToken).digest('hex');
@@ -313,6 +323,16 @@ export const resetPassword = async (
 
     if (!user) {
       return next(new ErrorHandler(400, 'Invalid or expired reset token'));
+    }
+
+     // Add check for Google user
+     if (user.google_id) {
+      return next(
+        new ErrorHandler(
+          400,
+          'This account uses Google authentication. Please use Google login to access your account.',
+        ),
+      );
     }
 
     user.password = password;

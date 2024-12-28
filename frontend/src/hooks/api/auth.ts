@@ -1,8 +1,8 @@
 import { LoginResponse } from "@/app/(auth)/login/_components/LoginForm"
 import { SignUpResponse } from "@/app/(auth)/sign-up/_components/SignUpForm"
 import { ApiError } from "@/lib/api"
-import { LoginFormValues } from "@/schemas/auth.schema"
-import { loginWithCredentials, loginWithGoogle, signUp } from "@/services/auth"
+import { ForgotPasswordValues, LoginFormValues } from "@/schemas/auth.schema"
+import { forgotPassword, loginWithCredentials, loginWithGoogle, signUp } from "@/services/auth"
 import { SignUpPayload } from "@/types/auth"
 import { useMutation, UseMutationOptions } from "@tanstack/react-query"
 
@@ -23,6 +23,13 @@ export const useLoginWithCredentialsMutation = ({ ...options }: UseMutationOptio
 export const useLoginWithGoogleMutation = ({ ...options }: UseMutationOptions<LoginResponse, ApiError, any, unknown>) => {
     return useMutation({
         mutationFn: loginWithGoogle,
+        ...options
+    })
+}
+
+export const useForgotPasswordMutation = ({ ...options }: UseMutationOptions<unknown, ApiError, ForgotPasswordValues, unknown>) => {
+    return useMutation({
+        mutationFn: forgotPassword,
         ...options
     })
 }
