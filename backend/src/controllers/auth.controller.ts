@@ -50,6 +50,16 @@ export const register = async (
     });
 
     if (existingUser) {
+      // Add check for Google user
+      if (existingUser.google_id) {
+        return next(
+          new ErrorHandler(
+            400,
+            'This email is already registered with Google. Please use Google login.',
+          ),
+        );
+      }
+
       return next(
         new ErrorHandler(400, 'Email or username already exists', {
           field: existingUser.email === validatedData.email ? 'email' : 'username',
@@ -165,12 +175,19 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
 
     const user = await User.findOne({ email }).select('+password');
     if (!user) {
-      return next(new ErrorHandler(401, 'Invalid email or password'));
+      return next(new ErrorHandler(400, 'Invalid email or password'));
+    }
+
+    // Add check for Google user
+    if (user.google_id) {
+      return next(
+        new ErrorHandler(400, 'This email is registered with Google. Please use Google login.'),
+      );
     }
 
     const isPasswordValid = await user.comparePassword(password);
     if (!isPasswordValid) {
-      return next(new ErrorHandler(401, 'Invalid email or password'));
+      return next(new ErrorHandler(400, 'Invalid email or password'));
     }
 
     const token = generateToken({
@@ -328,7 +345,6 @@ export const googleLogin = async (
 ): Promise<void> => {
   try {
     const { credential } = req.body;
-    console.log('342: ', credential);
 
     // Verify Google token
     const ticket = await googleClient.verifyIdToken({
@@ -345,6 +361,15 @@ export const googleLogin = async (
 
     // Find or create user
     let user = await User.findOne({ email });
+
+    if (user && !user.google_id) {
+      return next(
+        new ErrorHandler(
+          400,
+          'This email is already registered with credentials. Please use normal login.',
+        ),
+      );
+    }
 
     if (!user) {
       // Create new user
