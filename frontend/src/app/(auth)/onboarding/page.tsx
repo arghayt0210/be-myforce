@@ -1,12 +1,15 @@
-'use client'
-
-import { useAuthStore } from '@/hooks/store/auth.store'
 import React from 'react'
+import OnboardingForm from './_components/OnboardingForm'
+
+export const metadata = {
+    title: 'Onboarding',
+    description: 'Onboarding page',
+}
 
 export default function OnboardingPage() {
-    const { user } = useAuthStore()
-    console.log(user)
     return (
-        <div>Onboarding Page</div>
+        <div>
+            <OnboardingForm />
+        </div>
     )
 }
