@@ -19,7 +19,7 @@ const Logo = ({ className = '', showText = true }: LogoProps) => {
             />
             {showText && (
                 <span className={`ml-2 text-xl font-bold text-primary`}>
-                    MyForce
+                    BeMyForce
                 </span>
             )}
         </Link>
