@@ -2,23 +2,33 @@ import type { NextConfig } from "next";
 
 /** @type {import('next').NextConfig} */
 const nextConfig: NextConfig = {
-  // Ensure static files are handled correctly
-  assetPrefix: process.env.NODE_ENV === 'production' ? '.' : '',
+  output: 'standalone',
     
-  // Add security headers
-  async headers() {
-      return [
-          {
-              source: '/_next/static/css/:path*',
-              headers: [
-                  {
-                      key: 'Content-Type',
-                      value: 'text/css'
-                  }
-              ]
-          }
-      ]
-  },
+    // Configure headers for all static files
+    async headers() {
+        return [
+            {
+                // Handle all files in chunks directory (both JS and CSS)
+                source: '/_next/static/chunks/:path*',
+                headers: [
+                    {
+                        key: 'Cache-Control',
+                        value: 'public, max-age=31536000, immutable'
+                    }
+                ]
+            },
+            {
+                // Handle font files
+                source: '/_next/static/media/:path*',
+                headers: [
+                    {
+                        key: 'Cache-Control',
+                        value: 'public, max-age=31536000, immutable'
+                    }
+                ]
+            }
+        ]
+    },
   images: {
     remotePatterns: [
         {
