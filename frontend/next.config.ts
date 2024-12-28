@@ -2,6 +2,23 @@ import type { NextConfig } from "next";
 
 /** @type {import('next').NextConfig} */
 const nextConfig: NextConfig = {
+  // Ensure static files are handled correctly
+  assetPrefix: process.env.NODE_ENV === 'production' ? '.' : '',
+    
+  // Add security headers
+  async headers() {
+      return [
+          {
+              source: '/_next/static/css/:path*',
+              headers: [
+                  {
+                      key: 'Content-Type',
+                      value: 'text/css'
+                  }
+              ]
+          }
+      ]
+  },
   images: {
     remotePatterns: [
         {
@@ -21,7 +38,7 @@ const nextConfig: NextConfig = {
       {
         source: '/api/:path*',
         destination: `${process.env.NEXT_PUBLIC_API_URL}/:path*`,
-      },
+      }
     ];
   },
   eslint: {
