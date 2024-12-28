@@ -1,5 +1,5 @@
 import api from "@/lib/api";
-import { ForgotPasswordValues, LoginFormValues } from "@/schemas/auth.schema";
+import { ForgotPasswordValues, LoginFormValues, ResetPasswordValues } from "@/schemas/auth.schema";
 import { SignUpPayload } from "@/types/auth";
 
 export const signUp = async (data: SignUpPayload) => {
@@ -28,5 +28,10 @@ export const logout = async () => {
 
 export const forgotPassword = async (data: ForgotPasswordValues) => {
     const response = await api.post('/auth/forgot-password', data)
+    return response.data
+}
+
+export const resetPassword = async (data: ResetPasswordValues) => {
+    const response = await api.post('/auth/reset-password', data)
     return response.data
 }

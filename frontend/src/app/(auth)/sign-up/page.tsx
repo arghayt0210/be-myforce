@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import React from 'react'
-import registerpageImage from '@/assets/images/registerpage.png'
+import fillForm from '@/assets/images/fill-form.svg'
 import SignUpForm from './_components/SignUpForm'
 import Container from '@/components/Container'
 
@@ -12,11 +12,11 @@ export const metadata = {
 export default function SignUpPage() {
     return (
         <Container>
-            <div className="min-h-screen flex flex-col lg:flex-row">
+            <div className="flex flex-col lg:flex-row">
                 {/* Left side - Image */}
-                <div className="hidden lg:flex lg:w-2/5">
+                <div className="hidden lg:flex lg:w-2/5 items-center">
                     <Image
-                        src={registerpageImage}
+                        src={fillForm}
                         alt="Sign up"
                         width={800}
                         height={800}

@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import React from 'react'
-import loginPageImage from '@/assets/images/registerpage.png'
+import fillForm from '@/assets/images/fill-form.svg'
 import LoginForm from './_components/LoginForm'
 import Container from '@/components/Container'
 
@@ -12,11 +12,11 @@ export const metadata = {
 export default function LoginPage() {
     return (
         <Container>
-            <div className="min-h-screen flex flex-col lg:flex-row">
+            <div className="flex flex-col lg:flex-row">
                 {/* Left side - Image */}
-                <div className="hidden lg:flex lg:w-2/5">
+                <div className="hidden lg:flex lg:w-2/5 items-center">
                     <Image
-                        src={loginPageImage}
+                        src={fillForm}
                         alt="Login"
                         width={800}
                         height={800}

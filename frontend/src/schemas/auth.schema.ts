@@ -48,3 +48,21 @@ export const forgotPasswordSchema = z.object({
 })
 
 export type ForgotPasswordValues = z.infer<typeof forgotPasswordSchema>
+
+export const resetPasswordSchema = z.object({
+  email: z.string().email('Please enter a valid email address'),
+  token: z.string().min(1, 'Token is required'),
+  password: z
+    .string()
+    .min(8, 'Password must be at least 8 characters')
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
+      'Password must contain at least one uppercase letter, one lowercase letter, one number and one special character',
+    ),
+  confirmPassword: z.string().min(8, 'Password must be at least 8 characters'),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"], // path of error
+});
+
+export type ResetPasswordValues = z.infer<typeof resetPasswordSchema>

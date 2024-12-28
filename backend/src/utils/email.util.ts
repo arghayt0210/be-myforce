@@ -11,6 +11,7 @@ interface EmailData {
   otp?: string;
   resetToken?: string;
   interests?: string[];
+  email?: string;
 }
 
 type EmailTemplateFunction = (data: EmailData) => EmailTemplate;
@@ -65,7 +66,7 @@ const emailTemplates: EmailTemplates = {
         <p>Hi ${data.userName},</p>
         <p>We received a request to reset your password. Click the button below to set a new password:</p>
         <div style="text-align: center; margin: 20px 0;">
-          <a href="${process.env.FRONTEND_URL}/reset-password/${data.resetToken}" 
+          <a href="${process.env.FRONTEND_URL}/reset-password/${data.resetToken}?email=${data.email}" 
              style="background-color: #4CAF50; color: white; padding: 12px 20px; 
                     text-decoration: none; border-radius: 4px;">
             Reset Password

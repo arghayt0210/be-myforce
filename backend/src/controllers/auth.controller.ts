@@ -282,6 +282,7 @@ export const forgotPassword = async (
       data: {
         userName: user.full_name,
         resetToken,
+        email: user.email,
       },
     });
 
