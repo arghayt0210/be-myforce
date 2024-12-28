@@ -26,7 +26,10 @@ jobs:
             git fetch --all
             git reset --hard origin/main
             
-            # Clear ports and stop existing processes
+            # Kill specific processes by PID
+            sudo kill -9 42481 7494 || true
+            
+            # Double-check and force kill any remaining processes on these ports
             sudo fuser -k 8000/tcp || true
             sudo fuser -k 3000/tcp || true
             pm2 delete all || true
@@ -35,16 +38,16 @@ jobs:
             cd backend
             npm install --legacy-peer-deps
             npm run build
-            NODE_ENV=production npm run start
             
             # Frontend deployment
             cd ../frontend
             npm install --legacy-peer-deps
             npm run build
-            NODE_ENV=production npm run start
             
             # Start PM2 processes
+            cd ../backend
             pm2 start npm --name "backend" -- start
+            cd ../frontend
             pm2 start npm --name "frontend" -- start
             pm2 save
             
