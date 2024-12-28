@@ -26,7 +26,7 @@ export default function SignUpPage() {
                 </div>
 
                 {/* Right side - Form */}
-                <div className="flex-1 flex items-center justify-center p-4 lg:p-8">
+                <div className="flex-1 flex justify-center px-4 lg:px-8">
                     <div className="w-full max-w-sm space-y-6">
                         <div className="text-center">
                             <h1 className="text-2xl font-bold">Create your account</h1>

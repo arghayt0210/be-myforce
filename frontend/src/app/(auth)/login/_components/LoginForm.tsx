@@ -13,10 +13,9 @@ import Link from 'next/link';
 import { LoginFormValues, loginSchema } from '@/schemas/auth.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-// import GoogleIcon from '@/assets/icons/GoogleIcon';
-import { useLoginWithCredentialsMutation } from '@/hooks/api/auth';
+import { useLoginWithCredentialsMutation, useLoginWithGoogleMutation } from '@/hooks/api/auth';
 import { LoadingButton } from '@/components/LoadingButton';
-// import { useRouter } from 'next/navigation';
+import { GoogleLogin } from '@react-oauth/google';
 
 export interface User {
     _id: string;
@@ -35,10 +34,24 @@ export interface User {
     __v: number;
     last_login: string;
 }
+export interface GoogleUser {
+    _id: string;
+    full_name: string;
+    username: string;
+    email: string;
+    is_onboarded: boolean;
+    user_type: 'user' | 'admin';
+    is_email_verified: boolean;
+    profile_image: string;
+}
 
 export interface LoginResponse {
     message: string;
     user: User;
+}
+export interface GoogleLoginResponse {
+    message: string;
+    user: GoogleUser;
 }
 
 export default function LoginForm() {
@@ -70,6 +83,29 @@ export default function LoginForm() {
         }
     })
 
+    const loginWithGoogleMutation = useLoginWithGoogleMutation({
+        onSuccess: (data: GoogleLoginResponse) => {
+            setAuth({
+                ...user,
+                _id: data.user._id,
+                full_name: data.user.full_name,
+                username: data.user.username,
+                email: data.user.email,
+                is_onboarded: data.user.is_onboarded,
+                user_type: data.user.user_type,
+                is_email_verified: data.user.is_email_verified,
+                profile_image: data.user.profile_image,
+            })
+            if (data.user.is_email_verified && data.user.is_onboarded) {
+                router.push('/feed')
+            } else if (data.user.is_email_verified && !data.user.is_onboarded) {
+                router.push('/onboarding')
+            } else if (!data.user.is_email_verified) {
+                router.push('/verify-email')
+            }
+        },
+    })
+
     const form = useForm<LoginFormValues>({
         resolver: zodResolver(loginSchema),
         defaultValues: {
@@ -77,9 +113,6 @@ export default function LoginForm() {
             password: '',
         },
     });
-
-
-
 
 
     const onSubmit = (data: LoginFormValues) => {
@@ -187,6 +220,26 @@ export default function LoginForm() {
                 </div>
 
                 {/* Google Login Button Container */}
+                <div className='w-full flex justify-center'>
+                    <GoogleLogin
+                        onSuccess={credentialResponse => {
+                            loginWithGoogleMutation.mutate(credentialResponse)
+                        }}
+                        onError={() => {
+                            console.log('Login Failed');
+                            toast({
+                                title: "Error",
+                                description: "Failed to login with Google",
+                            })
+                        }}
+                        shape='rectangular'
+                        size='large'
+                        auto_select={true}
+                        useOneTap={false}
+                        cancel_on_tap_outside={true}
+                        ux_mode='popup'
+                    />
+                </div>
 
             </>
         </Form>

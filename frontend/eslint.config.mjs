@@ -9,6 +9,7 @@ const compat = new FlatCompat({
 
 const eslintConfig = [
   ...compat.config({
+    ignorePatterns: ['src/hooks/use-toast.ts', '**/use-toast.ts'],
     extends: ['eslint:recommended',
      'plugin:@next/next/recommended','next', 'prettier'],
   }),

@@ -8,6 +8,7 @@ import { useAuthStore } from "@/hooks/store/auth.store"
 import Image from "next/image"
 import { logout } from "@/services/auth"
 import { useRouter } from "next/navigation"
+import { googleLogout } from "@react-oauth/google"
 
 const UserMenu = () => {
     const { user, clearAuth } = useAuthStore()
@@ -17,6 +18,7 @@ const UserMenu = () => {
         await logout()
         clearAuth()
         router.push('/')
+        googleLogout()
     }
 
     return (
