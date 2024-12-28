@@ -27,13 +27,8 @@ export default function LoginPage() {
 
                 {/* Right side - Form */}
                 <div className="flex-1 flex justify-center px-4 lg:px-8">
-                    <div className="w-full max-w-sm space-y-6">
-                        <div className="text-center">
-                            <h1 className="text-2xl font-bold">Welcome back</h1>
-                            <p className="mt-2 text-gray-600">
-                                Login to your account
-                            </p>
-                        </div>
+                    <div className="w-full max-w-sm">
+
                         <LoginForm />
                     </div>
                 </div>

@@ -24,6 +24,8 @@ import { useAuthStore } from '@/hooks/store/auth.store'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { GoogleLogin } from '@react-oauth/google';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import Link from 'next/link'
+import { LoadingButton } from '@/components/LoadingButton'
 
 export interface SignUpResponse {
     message: string;
@@ -339,13 +341,26 @@ export default function SignUpForm() {
                                 )}
                             />
 
-                            <Button
+                            <div className="flex items-center justify-between">
+                                <div></div>
+                                <Link
+                                    href="/login"
+                                    className="text-sm text-primary hover:underline"
+                                >
+                                    Already have an account?
+                                </Link>
+                            </div>
+
+
+                            <LoadingButton
                                 type="submit"
-                                className="w-full bg-primary text-white"
-                                disabled={signUpMutation.isPending}
+                                variant="outline"
+                                isLoading={signUpMutation.isPending}
+                                loadingText="Creating account..."
+                                className="w-full h-11 text-base font-medium bg-primary text-white hover:bg-primary/90"
                             >
-                                {signUpMutation.isPending ? 'Creating account...' : 'Create account'}
-                            </Button>
+                                Sign Up
+                            </LoadingButton>
 
                             <div className="relative my-6">
                                 <div className="absolute inset-0 flex items-center">
