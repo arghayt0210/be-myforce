@@ -33,7 +33,7 @@ export const completeOnboarding = async (
     user.interests = result.data.interests.map((id) => new Types.ObjectId(id));
     user.bio = result.data.bio;
     user.location = {
-      type: { type: 'Point' },
+      type: result.data.location.type,
       coordinates: result.data.location.coordinates,
       address: result.data.location.address,
       city: result.data.location.city,

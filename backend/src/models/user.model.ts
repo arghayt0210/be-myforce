@@ -21,7 +21,7 @@ interface IUser extends Document {
   profile_image_asset?: mongoose.Types.ObjectId;
   bio?: string;
   location: {
-    type: { type: string };
+    type: string;
     coordinates: [number, number]; // [longitude, latitude]
     address: string;
     city: string;
