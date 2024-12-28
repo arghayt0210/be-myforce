@@ -26,6 +26,11 @@ jobs:
             git fetch --all
             git reset --hard origin/main
             
+            # Clear ports and stop existing processes
+            sudo fuser -k 8000/tcp || true
+            sudo fuser -k 3000/tcp || true
+            pm2 delete all || true
+            
             # Backend deployment
             cd backend
             npm install --legacy-peer-deps
@@ -38,8 +43,10 @@ jobs:
             npm run build
             NODE_ENV=production npm run start
             
-            # Restart PM2 processes
-            pm2 restart backend frontend --update-env
+            # Start PM2 processes
+            pm2 start npm --name "backend" -- start
+            pm2 start npm --name "frontend" -- start
+            pm2 save
             
             # Reload Nginx
             sudo systemctl reload nginx
