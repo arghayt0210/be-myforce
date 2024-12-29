@@ -8,10 +8,22 @@ import Container from './Container';
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuList, NavigationMenuTrigger } from './ui/navigation-menu';
 import { useAuthStore } from '@/hooks/store/auth.store';
 import UserMenu from './UserMenu';
+import { Plus } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { logout } from '@/services/auth';
+import { googleLogout } from '@react-oauth/google';
 
 const Header = () => {
-    const { isAuthenticated } = useAuthStore()
+    const { isAuthenticated, clearAuth } = useAuthStore()
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const router = useRouter()
+
+    const handleLogout = async () => {
+        await logout()
+        clearAuth()
+        router.push('/')
+        googleLogout()
+    }
 
     const navigationLinks = {
         discover: {
@@ -66,9 +78,21 @@ const Header = () => {
                     {/* Right Section */}
                     <div className="flex flex-1 items-center justify-end space-x-4">
                         <nav className="flex items-center space-x-2">
+                            {/* Add Create Post link for desktop */}
+                            {isAuthenticated && (
+                                <Link
+                                    href="/create-post"
+                                    className="hidden md:inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium transition-colors bg-primary text-primary-foreground hover:bg-primary/90"
+                                >
+                                    <Plus className="h-4 w-4" />
+                                    Create Post
+                                </Link>
+                            )}
                             <ThemeToggle />
                             {isAuthenticated ? (
+
                                 <UserMenu />
+
                             ) : (
                                 <Link
                                     href="/login"
@@ -105,7 +129,10 @@ const Header = () => {
                         <div className="space-y-1 px-4 pb-3 pt-2">
                             {Object.entries(navigationLinks).map(([key, category]) => (
                                 <div key={key} className="space-y-1">
-                                    <button className="w-full text-left px-3 py-2 text-sm font-medium text-muted-foreground">
+                                    <button
+                                        className="w-full text-left px-3 py-2 text-sm font-medium text-muted-foreground"
+                                        onClick={() => setIsMenuOpen(false)}
+                                    >
                                         {category.name}
                                     </button>
                                     <div className="pl-4 space-y-1">
@@ -113,6 +140,7 @@ const Header = () => {
                                             <Link
                                                 key={link.href}
                                                 href={link.href}
+                                                onClick={() => setIsMenuOpen(false)}
                                                 className="block px-3 py-2 text-sm text-muted-foreground hover:text-accent-foreground"
                                             >
                                                 {link.name}
@@ -122,13 +150,16 @@ const Header = () => {
                                 </div>
                             ))}
                             <div className="pt-4 space-y-2">
-                                {!isAuthenticated && (
-                                    <Link
-                                        href="/login"
+                                {isAuthenticated && (
+                                    <button
+                                        onClick={() => {
+                                            handleLogout();
+                                            setIsMenuOpen(false);
+                                        }}
                                         className="block w-full px-3 py-2 text-sm font-medium text-center bg-primary text-primary-foreground hover:bg-primary/90 rounded-md"
                                     >
-                                        Login
-                                    </Link>
+                                        Logout
+                                    </button>
                                 )}
                             </div>
                         </div>

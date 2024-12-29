@@ -11,7 +11,7 @@ router.post(
   isEmailVerified,
   isOnboarded,
   uploadMultiple.array('files', 10), // Max 10 files
-  createAchievement
+  createAchievement,
 );
 
 export default router;

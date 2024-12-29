@@ -6,6 +6,7 @@ import Providers from '@/providers';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Container from '@/components/Container';
+import BottomBar from '@/components/BottomBar';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -56,12 +57,16 @@ export default function RootLayout({
         <Providers>
           <>
             <Header />
-            <main className="flex-grow pt-16">
+            <main className="flex-grow pt-16 md:pb-0 pb-16">
               <Container>
                 {children}
               </Container>
             </main>
-            <Footer />
+            {/* Add padding-bottom on mobile */}
+            <div className="md:pb-0 pb-16">
+              <Footer />
+            </div>
+            <BottomBar />
           </>
         </Providers>
       </body>

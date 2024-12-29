@@ -39,7 +39,7 @@ const UserMenu = () => {
                     <span className="sr-only">User menu</span>
                 </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent className="hidden md:block w-56" align="end">
                 <DropdownMenuItem asChild>
                     <Link href="/profile">My Profile</Link>
                 </DropdownMenuItem>

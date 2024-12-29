@@ -36,34 +36,39 @@ const achievementSchema = new mongoose.Schema<IAchievement>(
       maxLength: 200,
     },
     description: {
-      blocks: [{
-        type: mongoose.Schema.Types.Mixed,
-        required: true,
-      }],
+      blocks: [
+        {
+          type: mongoose.Schema.Types.Mixed,
+          required: true,
+        },
+      ],
       time: Number,
       version: String,
     },
     interests: {
-      type: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Interest',
-        required: true,
-      }],
+      type: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Interest',
+          required: true,
+        },
+      ],
       validate: {
-        validator: async function(interests: mongoose.Types.ObjectId[]) {
+        validator: async function (interests: mongoose.Types.ObjectId[]) {
           const user = await mongoose.model('User').findById(this.user);
           if (!user) return false;
-          
+
           // Check if ALL interests exist in user's interest list
-          return interests.every(interest => 
-            user.interests.some((userInterest: mongoose.Types.ObjectId) => 
-              userInterest.toString() === interest.toString()
-            )
+          return interests.every((interest) =>
+            user.interests.some(
+              (userInterest: mongoose.Types.ObjectId) =>
+                userInterest.toString() === interest.toString(),
+            ),
           );
         },
-        message: 'All interests must be from user\'s interest list'
+        message: "All interests must be from user's interest list",
       },
-      required: true
+      required: true,
     },
     likes_count: {
       type: Number,
@@ -76,19 +81,19 @@ const achievementSchema = new mongoose.Schema<IAchievement>(
     },
     rejection_reason: {
       type: String,
-      required: function(this: IAchievement) {
+      required: function (this: IAchievement) {
         return this.status === 'rejected';
-      }
+      },
     },
     approved_at: {
       type: Date,
-    }
+    },
   },
-  { 
+  {
     timestamps: true,
     toJSON: { virtuals: true },
-    toObject: { virtuals: true }
-  }
+    toObject: { virtuals: true },
+  },
 );
 
 // Indexes
@@ -101,11 +106,11 @@ achievementSchema.virtual('assets', {
   ref: 'Asset',
   localField: '_id',
   foreignField: 'related_id',
-  match: { related_model: 'Achievement' }
+  match: { related_model: 'Achievement' },
 });
 
 // Pre-save middleware to set approved_at date
-achievementSchema.pre('save', function(next) {
+achievementSchema.pre('save', function (next) {
   if (this.isModified('status') && this.status === 'approved') {
     this.approved_at = new Date();
   }

@@ -57,7 +57,7 @@ export const createAsset = async ({
       related_model: relatedModel,
       related_id: relatedId,
       size: file.size,
-      ...(isVideo && duration && { duration })
+      ...(isVideo && duration && { duration }),
     };
 
     const asset = await Asset.create(assetData);
@@ -90,7 +90,7 @@ export const createMultipleAssets = async ({
           related_model: relatedModel,
           related_id: relatedId,
           size: files[index].size,
-          ...(isVideo && videoDuration && { duration: videoDuration })
+          ...(isVideo && videoDuration && { duration: videoDuration }),
         };
       }),
     );

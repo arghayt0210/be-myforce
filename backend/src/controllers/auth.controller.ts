@@ -326,8 +326,8 @@ export const resetPassword = async (
       return next(new ErrorHandler(400, 'Invalid or expired reset token'));
     }
 
-     // Add check for Google user
-     if (user.google_id) {
+    // Add check for Google user
+    if (user.google_id) {
       return next(
         new ErrorHandler(
           400,
