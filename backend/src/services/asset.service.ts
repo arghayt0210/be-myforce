@@ -11,21 +11,29 @@ import logger from '@/utils/logger.util';
 interface UploadedFile {
   buffer: Buffer;
   mimetype: string;
+  size?: number;
 }
+
+// interface FileWithMetadata extends UploadedFile {
+//   // size?: number;
+//   duration?: number;
+// }
 
 interface CreateAssetParams {
   file: UploadedFile;
-  userId?: Types.ObjectId;
+  userId: Types.ObjectId;
   relatedModel: 'Achievement' | 'User';
-  relatedId?: Types.ObjectId;
+  relatedId: Types.ObjectId;
   folder: string;
+  duration?: number; // Optional, only for videos
 }
 
 interface CreateMultipleAssetsParams {
   files: UploadedFile[];
-  userId?: Types.ObjectId;
+  videoDuration?: number; // Single duration for the one allowed video
+  userId: Types.ObjectId;
   relatedModel: 'Achievement' | 'User';
-  relatedId?: Types.ObjectId;
+  relatedId: Types.ObjectId;
   folder: string;
 }
 
@@ -35,23 +43,24 @@ export const createAsset = async ({
   relatedModel,
   relatedId,
   folder,
+  duration,
 }: CreateAssetParams) => {
   try {
-    if (!file) {
-      throw new Error('No file provided');
-    }
-
     const uploadResult = await singleFileUpload(file, { folder });
+    const isVideo = uploadResult.asset_type === 'video';
 
-    const asset = await Asset.create({
+    const assetData = {
       user: userId,
       url: uploadResult.url,
       public_id: uploadResult.public_id,
-      asset_type: uploadResult.asset_type === 'image' ? 'image' : 'video',
+      asset_type: isVideo ? 'video' : 'image',
       related_model: relatedModel,
       related_id: relatedId,
-    });
+      size: file.size,
+      ...(isVideo && duration && { duration })
+    };
 
+    const asset = await Asset.create(assetData);
     return asset;
   } catch (error) {
     logger.error('Asset creation error:', error);
@@ -61,6 +70,7 @@ export const createAsset = async ({
 
 export const createMultipleAssets = async ({
   files,
+  videoDuration,
   userId,
   relatedModel,
   relatedId,
@@ -70,14 +80,19 @@ export const createMultipleAssets = async ({
     const uploadResults = await multiFileUpload(files, { folder });
 
     const assets = await Asset.insertMany(
-      uploadResults.map((result) => ({
-        user: userId,
-        url: result.url,
-        public_id: result.public_id,
-        asset_type: result.asset_type === 'image' ? 'image' : 'video',
-        related_model: relatedModel,
-        related_id: relatedId,
-      })),
+      uploadResults.map((result, index) => {
+        const isVideo = result.asset_type === 'video';
+        return {
+          user: userId,
+          url: result.url,
+          public_id: result.public_id,
+          asset_type: isVideo ? 'video' : 'image',
+          related_model: relatedModel,
+          related_id: relatedId,
+          size: files[index].size,
+          ...(isVideo && videoDuration && { duration: videoDuration })
+        };
+      }),
     );
 
     return assets;

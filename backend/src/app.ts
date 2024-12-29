@@ -17,6 +17,8 @@ import { connectDB } from '@utils/db.util';
 import logger from '@utils/logger.util';
 import onboardingRoutes from '@/routes/onboarding.routes';
 import masterRoutes from '@/routes/master.routes';
+import achievementRoutes from '@/routes/achievement.routes';
+import { errorMiddleware } from './middlewares/error.middleware';
 const app: express.Application = express();
 
 // Apply CORS before other middleware
@@ -40,11 +42,15 @@ app.use('/auth', authRoutes);
 app.use('/verification', verificationRoutes);
 app.use('/onboarding', onboardingRoutes);
 app.use('/master', masterRoutes);
+app.use('/achievements', achievementRoutes);
 
 // catch 404 and forward to error handler
 app.use((_req, _res, next) => {
   next(createError(404));
 });
+
+// Add the custom error middleware first
+app.use(errorMiddleware);
 
 // error handler
 const errorHandler: express.ErrorRequestHandler = (err, _req, res, next) => {
