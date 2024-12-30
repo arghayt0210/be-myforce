@@ -18,7 +18,9 @@ import logger from '@utils/logger.util';
 import onboardingRoutes from '@/routes/onboarding.routes';
 import masterRoutes from '@/routes/master.routes';
 import achievementRoutes from '@/routes/achievement.routes';
+import needRoutes from '@/routes/need.routers';
 import { errorMiddleware } from './middlewares/error.middleware';
+import { initializeCronJobs } from '@utils/cron.util';
 const app: express.Application = express();
 
 // Apply CORS before other middleware
@@ -43,6 +45,7 @@ app.use('/verification', verificationRoutes);
 app.use('/onboarding', onboardingRoutes);
 app.use('/master', masterRoutes);
 app.use('/achievements', achievementRoutes);
+app.use('/needs', needRoutes);
 
 // catch 404 and forward to error handler
 app.use((_req, _res, next) => {
@@ -100,6 +103,9 @@ function onListening() {
 // Connect to MongoDB and start server only after successful connection
 connectDB()
   .then(() => {
+    // Initialize cron jobs after DB connection is established
+    initializeCronJobs();
+
     server.listen(port);
     server.on('error', onError);
     server.on('listening', onListening);

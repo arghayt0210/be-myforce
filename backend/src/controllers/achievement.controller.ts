@@ -11,7 +11,14 @@ import User from '@/models/user.model';
 // Define Zod schema for achievement creation
 const createAchievementSchema = z.object({
   title: z.string().min(1, 'Title is required'),
-  description: z.string().min(1, 'Description is required'),
+  description: z.string().refine((data) => {
+    try {
+      JSON.parse(data); // Ensure it's valid stringified JSON
+      return true;
+    } catch {
+      return false;
+    }
+  }, 'Invalid stringified JSON format'),
   interests: z.array(z.string()).min(1, 'At least one interest is required'),
 });
 
@@ -66,7 +73,7 @@ export const createAchievement = async (
     const achievement = await Achievement.create({
       user: req.user?._id,
       title: result.data.title,
-      description: JSON.parse(result.data.description), // Parse EditorJS data
+      description: result.data.description,
       interests: result.data.interests.map((id) => new Types.ObjectId(id)),
       status: 'pending',
     });

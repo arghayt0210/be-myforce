@@ -22,7 +22,7 @@ interface UploadedFile {
 interface CreateAssetParams {
   file: UploadedFile;
   userId: Types.ObjectId;
-  relatedModel: 'Achievement' | 'User';
+  relatedModel: 'Achievement' | 'User' | 'Need';
   relatedId: Types.ObjectId;
   folder: string;
   duration?: number; // Optional, only for videos
@@ -32,7 +32,7 @@ interface CreateMultipleAssetsParams {
   files: UploadedFile[];
   videoDuration?: number; // Single duration for the one allowed video
   userId: Types.ObjectId;
-  relatedModel: 'Achievement' | 'User';
+  relatedModel: 'Achievement' | 'User' | 'Need';
   relatedId: Types.ObjectId;
   folder: string;
 }

@@ -1,24 +1,24 @@
 import mongoose, { Document } from 'mongoose';
 
-// Define achievement status type
-type AchievementStatus = 'pending' | 'approved' | 'rejected';
+type ApprovalStatus = 'pending' | 'approved' | 'rejected';
+type NeedStatus = 'searching' | 'fulfilled' | 'expired';
 
-// Interface for Achievement document
-interface IAchievement extends Document {
+interface INeed extends Document {
   user: mongoose.Types.ObjectId;
   title: string;
   description: string;
-  interests: mongoose.Types.ObjectId[]; // References to Interest model
-  likes_count: number;
-  comments_count: number;
-  status: AchievementStatus;
+  interests: mongoose.Types.ObjectId[];
+  event_date: Date;
+  is_approved: ApprovalStatus;
+  status: NeedStatus;
   rejection_reason?: string;
   approved_at?: Date;
+  fulfilled_at?: Date;
   createdAt: Date;
   updatedAt: Date;
 }
 
-const achievementSchema = new mongoose.Schema<IAchievement>(
+const needSchema = new mongoose.Schema<INeed>(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
@@ -47,8 +47,6 @@ const achievementSchema = new mongoose.Schema<IAchievement>(
         validator: async function (interests: mongoose.Types.ObjectId[]) {
           const user = await mongoose.model('User').findById(this.user);
           if (!user) return false;
-
-          // Check if ALL interests exist in user's interest list
           return interests.every((interest) =>
             user.interests.some(
               (userInterest: mongoose.Types.ObjectId) =>
@@ -60,22 +58,36 @@ const achievementSchema = new mongoose.Schema<IAchievement>(
       },
       required: true,
     },
-    likes_count: {
-      type: Number,
-      default: 0,
+    event_date: {
+      type: Date,
+      required: true,
+      validate: {
+        validator: function (value: Date) {
+          return value > new Date();
+        },
+        message: 'Event date must be in the future',
+      },
     },
-    status: {
+    is_approved: {
       type: String,
       enum: ['pending', 'approved', 'rejected'],
       default: 'pending',
     },
+    status: {
+      type: String,
+      enum: ['searching', 'fulfilled', 'expired'],
+      default: 'searching',
+    },
     rejection_reason: {
       type: String,
-      required: function (this: IAchievement) {
-        return this.status === 'rejected';
+      required: function (this: INeed) {
+        return this.is_approved === 'rejected';
       },
     },
     approved_at: {
+      type: Date,
+    },
+    fulfilled_at: {
       type: Date,
     },
   },
@@ -86,27 +98,14 @@ const achievementSchema = new mongoose.Schema<IAchievement>(
   },
 );
 
-// Indexes
-achievementSchema.index({ user: 1, createdAt: -1 });
-achievementSchema.index({ interests: 1 });
-achievementSchema.index({ status: 1, createdAt: -1 });
-
-// Virtual for assets
-achievementSchema.virtual('assets', {
+// Add this virtual populate for assets
+needSchema.virtual('assets', {
   ref: 'Asset',
   localField: '_id',
   foreignField: 'related_id',
-  match: { related_model: 'Achievement' },
+  match: { related_model: 'Need' },
 });
 
-// Pre-save middleware to set approved_at date
-achievementSchema.pre('save', function (next) {
-  if (this.isModified('status') && this.status === 'approved') {
-    this.approved_at = new Date();
-  }
-  next();
-});
+const Need = mongoose.model<INeed>('Need', needSchema);
 
-const Achievement = mongoose.model<IAchievement>('Achievement', achievementSchema);
-
-export default Achievement;
+export default Need;

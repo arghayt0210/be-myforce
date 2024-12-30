@@ -2,7 +2,7 @@ import mongoose, { Document } from 'mongoose';
 
 // Update type definitions
 type AssetType = 'image' | 'video';
-type RelatedModelType = 'Achievement' | 'User';
+type RelatedModelType = 'Achievement' | 'User' | 'Need';
 
 // Interface for Asset document
 interface IAsset extends Document {
@@ -40,7 +40,7 @@ const assetSchema = new mongoose.Schema<IAsset>(
     },
     related_model: {
       type: String,
-      enum: ['Achievement', 'User'],
+      enum: ['Achievement', 'User', 'Need'],
       required: true,
     },
     related_id: {
